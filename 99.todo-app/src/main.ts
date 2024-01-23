@@ -1,24 +1,48 @@
-// import './style.css'
-// import typescriptLogo from './typescript.svg'
-// import viteLogo from '/vite.svg'
-// import { setupCounter } from './counter.ts'
+import List from "./models/List";
+import ListItem from "./models/ListItem";
+import ListTemplate from "./templates/ListTemplate";
 
-// document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-//   <div>
-//     <a href="https://vitejs.dev" target="_blank">
-//       <img src="${viteLogo}" class="logo" alt="Vite logo" />
-//     </a>
-//     <a href="https://www.typescriptlang.org/" target="_blank">
-//       <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-//     </a>
-//     <h1>Vite + TypeScript</h1>
-//     <div class="card">
-//       <button id="counter" type="button"></button>
-//     </div>
-//     <p class="read-the-docs">
-//       Click on the Vite and TypeScript logos to learn more
-//     </p>
-//   </div>
-// `
+const initApp = ():void => {
+    console.log('init!');
+    const listInstance = List.instance;
+    const listTemplateInstance = ListTemplate.instance;
 
-// setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+    const itemForm = document.getElementById('form') as HTMLFormElement;
+
+    itemForm.addEventListener('submit', (event: SubmitEvent): void =>{
+        event.preventDefault(); // 리프레시 되지 않게 만들기
+
+        // 새 item Text
+        const inputEl = document.getElementById('item-input') as HTMLInputElement;
+        const newText = inputEl.value.trim();// 스페이스(공백) 제거
+        if(!newText.length) return;
+        inputEl.value = '';
+        // 새 item ID
+        let currentId: number = listInstance.list.length; 
+        const itemId: number = currentId ? parseInt(listInstance.list[currentId-1].id)+1 : 1;
+        
+        // 새 Item생성하기
+        const newItem = new ListItem(itemId.toString(), newText);
+
+        // list에 new item 넣기
+        listInstance.addItem(newItem);
+
+        listTemplateInstance.render(listInstance);
+    })
+
+    const clearItemsEl = document.getElementById('clear-items-btn') as HTMLButtonElement;
+    clearItemsEl.addEventListener('click', ()=> {
+        listInstance.clearList();
+        listTemplateInstance.clear();
+    })
+
+
+
+    // 초기 데이터 load 하기
+    listInstance.load();
+    // 생성된 데이터를 이용해서 화면에 보여주기
+    listTemplateInstance.render(listInstance);
+
+}
+
+document.addEventListener("DOMContentLoaded", initApp);

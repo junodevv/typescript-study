@@ -12,7 +12,7 @@ interface IList{
 
 export default class List implements IList{
     
-    static instace: List = new List();
+    static instance: List = new List();
 
     private constructor(
         private _list: ListItem[] = []
@@ -40,7 +40,7 @@ export default class List implements IList{
                 itemObj._item,
                 itemObj._checked
             )
-            List.instace.addItem(newListItem);
+            List.instance.addItem(newListItem);
         })
 
 
